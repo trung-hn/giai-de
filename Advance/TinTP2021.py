@@ -1,4 +1,6 @@
+# %%
 import collections
+import itertools
 # %%
 
 
@@ -12,7 +14,7 @@ def prob1(A, B, C, D):
 # %%
 
 def prob3(N, K, nums):
-    mx = max(nums, key=lambda x: x[1])[1]
+    mx = max(itertools.chain(*nums))
     delta = [0] * (mx + 2)
     for start, end in nums:
         delta[start] += 1
@@ -25,7 +27,7 @@ def prob3(N, K, nums):
     return delta.count(K)
 
 
-print(prob2(3, 2, [[1, 5], [2, 8], [3, 7]]))
+print(prob3(3, 2, [[1, 5], [2, 8], [3, 7]]))
 
 # %%
 
@@ -35,7 +37,7 @@ def prob4(N, M, K, graph, targets):
     for start, end in graph:
         neis[start].append(end)
         neis[end].append(start)
-    max_dist_to_city = collections.defaultdict(int)
+    max_dist_from_city = collections.defaultdict(int)
 
     def bfs(start):
         q = [(start, 0)]
@@ -44,19 +46,19 @@ def prob4(N, M, K, graph, targets):
             visited.add(city)
 
             # Update distance
-            max_dist_to_city[city] = max(max_dist_to_city[city], dist)
+            max_dist_from_city[city] = max(max_dist_from_city[city], dist)
 
             # Visit neighbor cities
             for nei in neis[city]:
-                if nei in visited or nei == city:
+                if nei in visited:
                     continue
                 q.append((nei, dist + 1))
 
     for city in targets:
         bfs(city)
 
-    return [city for city, dist in max_dist_to_city.items() if dist <= K]
+    return [city for city, dist in max_dist_from_city.items() if dist <= K]
 
 
-print(prob3(6, 2, 2, [[1, 2], [3, 2], [3, 5], [4, 2], [5, 6]], [1, 3]))
-print(prob3(6, 3, 2, [[1, 2], [3, 2], [3, 5], [4, 1], [5, 6]], [1, 3, 5]))
+print(prob4(6, 2, 2, [[1, 2], [3, 2], [3, 5], [4, 2], [5, 6]], [1, 3]))
+print(prob4(6, 3, 2, [[1, 2], [3, 2], [3, 5], [4, 1], [5, 6]], [1, 3, 5]))
