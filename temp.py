@@ -1,4 +1,6 @@
 # %%
+import functools
+from math import comb
 import random
 import pandas as pd
 import numpy as np
@@ -427,22 +429,10 @@ dfs(14, 0, []):
 """
 
 
-def get_counter(nums):
-    freqs = [0] * (max(nums) + 1)
-    for num in nums:
-        freqs[num] += 1
-    print(freqs)
-    return freqs
-
-
 def main(N, M, nums):
-
     nums.sort(reverse=True)
     print(nums)
-    freqs = get_counter(nums)
-
-    # visited = collections.defaultdict(list)
-
+    freqs = collections.Counter(nums)
     rv = []
 
     def dfs(target=14, ptr=0, arr=[]):
@@ -452,12 +442,11 @@ def main(N, M, nums):
 
             # Check if freq is available ?
             if all(freqs[num] > 0 for num in arr):
-            if available, reduce freq
-            for num in arr:
-
-                freqs[num] -= 1
+                # if available, reduce freq
+                for num in arr:
+                    freqs[num] -= 1
             # Append to ans
-            rv.append(arr)
+                rv.append(arr)
             return
 
         # Recursive Case
@@ -470,7 +459,46 @@ def main(N, M, nums):
     return len(rv), rv
 
 
-print(main(8, 14, [9, 7, 4, 3, 3, 2, 8, 6]))
+@timer
+def write_disk(N, M, nums):
+    nums.sort(reverse=True)
+    rv = []
+
+    def get_best_combo(target=14, ptr=0, combo=[]):
+        # Base case
+        rv_target = target
+        rv_combo = combo
+        # Recursive case
+        for i in range(ptr, len(nums)):
+            num = nums[i]
+            if num <= target and freqs[num]:
+                freqs[num] -= 1
+                c_target, c_combo = get_best_combo(
+                    target - num, i + 1, combo + [num])
+                if c_target < rv_target:
+                    rv_target = c_target
+                    rv_combo = c_combo
+                freqs[num] += 1
+
+        return rv_target, rv_combo
+
+    freqs = collections.Counter(nums)
+    for num in nums:
+        if freqs[num]:
+            freqs[num] -= 1
+            _, combo = get_best_combo(M - num)
+            for val in combo:
+                freqs[val] -= 1
+            rv.append([num] + combo)
+    return rv
+
+
+print(write_disk(8, 14, [9, 7, 4, 3, 3, 2, 8, 6]))
+print(write_disk(2, 14, [10, 3]))
+print(write_disk(10, 1000, [3, 7, 6, 8, 8, 7, 6, 4, 4, 7]))
+
+arr = random.choices(range(1, 10), k=30)
+print(write_disk(len(arr), 20, arr))
 
 # %%
 
