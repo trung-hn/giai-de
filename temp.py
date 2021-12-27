@@ -1,6 +1,8 @@
 # %%
+from sympy import *
 import functools
 from math import comb
+from os import dup
 import random
 import pandas as pd
 import numpy as np
@@ -641,3 +643,156 @@ print(main(4, 5, [[1, 2, 1, 3, 2], [3, 2, 2, 2, 1, ],
 
 arr = [random.choices(range(2), k=100) for _ in range(66000)]
 print(main(len(arr), len(arr[0]), arr))
+
+# %%
+
+
+def duplicate(arr):
+    return [duplicate(val) if isinstance(val, list) else val for val in arr]
+
+
+x = [1, 3, 6, [18]]
+y = duplicate(x)
+# y = x[:]
+x[3][0] = 15
+x[1] = 12
+print(x)
+print(y)
+
+
+# %%
+
+def main(N):
+    mat = [[val for val in range(i, i*N + 1, i)] for i in range(1, N + 1)]
+    for i in range(2, N):
+        start = 4 if i == (N - 1) else 2
+        mat[i][max(N - i, 2):] = range(start, i * 2 + 1, 2)
+    return mat
+
+# output:
+# [1, 2, 3, 4, 5, 6]
+# [2, 4, 6, 8, 10, 12]
+# [3, 6, 9, 12, 2, 4]
+# [4, 8, 12, 2, 4, 6]
+# [5, 10, 2, 4, 6, 8]
+# [6, 12, 4, 6, 8, 10]
+
+
+print(*main(6), sep="\n")
+
+# %%
+
+
+def sort_num(num):
+    freqs = [0] * 10
+    while num:
+        freqs[num % 10] += 1
+        num //= 10
+    return (str(i) * freqs[i] for i in range(1, 10))
+
+
+def main(N):
+    a = 1
+    for _ in range(N - 1):
+        a = int("".join(sort_num(a * 2)))
+    return a
+
+
+print(main(7))
+
+
+# %%
+
+L = [1, 2, 3]
+L.append(4)
+print(L)
+
+
+L = [1, 2, 3]
+L.extend([4, 5])
+print(L)
+
+L.insert()
+
+
+# %%
+# import sympy
+
+
+x, y = symbols('x y')
+f = 3*y**2 - 2*y**3 - 3*x**2 + 6*x*y
+f = x*y + 4
+diff_x = diff(f, x)
+diff_y = diff(f, y)
+print(f)
+print(diff_x)
+print(diff_y)
+res = solve((diff_x, diff_y), x, y)
+print(res)
+if isinstance(res, dict):
+    res = [[res[x], res[x]]]
+print(res)
+for xm, ym in res:
+    diff_xx = diff(diff_x, x, 1)
+    print(diff_xx)
+    diff_xy = diff(diff_x, y, 1)
+    diff_yy = diff(diff_y, y, 1)
+    d = diff_xx * diff_yy - (diff_xy) ** 2
+    A = d.subs([(x, xm), (y, ym)])
+    fxxm = diff_xx.subs([(x, xm), (y, ym)])
+    print(A)
+    print(fxxm)
+
+xm = ...
+
+if isinstance(xm, dict):
+    xm = [[xm[x], xm[y]]]
+
+for x_m, y_m in xm:
+
+    diff_xx = ...
+    diff_xy = ...
+    diff_yy = ...
+    D = ...
+    A = D.subs([(x, x_m), (y, y_m)])
+
+    if A > 0:
+        diff_xx_solved = diff_xx.subs([(x, x_m), (y, y_m)])
+        if diff_xx_solved > 0:
+            # GTNN
+            ...
+        else:
+            # GTLN
+            ...
+    elif A == 0:
+        # KXD
+        ...
+    else:
+        # YEN NGUA
+        ...
+
+
+# %%
+
+def decipher(text, arr):
+    x, y, z = arr
+    key = abs(x**2 - y**2 - z)
+    return "".join(chr(ord(c) ^ key) for c in text)
+
+
+print(decipher("jgnnm", [1, 1, 2]))
+
+
+# %%
+
+
+def main(x, y):
+    rv = list(zip(x, y))
+    rv.sort(key=lambda x: x[0])
+    return list(zip(*rv))
+
+
+x = [2, 1, 4, 3]
+y = [1, 3, 5, 8]
+x, y = main(x, y)
+print(x, y, sep="\n")
