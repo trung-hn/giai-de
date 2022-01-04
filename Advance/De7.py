@@ -23,7 +23,7 @@ def prob1(N, arr):
 prob1(4, [[0, 1], [3, 5], [0, 2], [1, 2]])
 prob1(5, [[0, 1], [0, 2], [0, 3], [4, 4], [5, 5]])
 
-# %%
+# %% DUONG HAM
 
 
 def prob2(N, connections):
