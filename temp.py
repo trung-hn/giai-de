@@ -1,9 +1,13 @@
 # %%
+from types import new_class
+import numpy as np  # KHONG XOA
+from sympy import *  # KHONG XOA
 from sympy import *
 import functools
 from math import comb
 from os import dup
 import random
+import string
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -123,36 +127,6 @@ n = int(input("Enter Tree Level: "))
 tree = (f'{"*" * (2 * j + 1) : ^{n * 2 + 3}}' for i in range(n)
         for j in range(i + 3))
 print(*tree, sep="\n")
-
-
-# %%
-path = r'D:\Workspace\leetcode-solutions\src\7.reverse-integer.py'
-
-with open(path, 'r') as f:
-    rv = f.read()
-    print(rv)
-    print(list(rv))
-    print(len(rv))
-
-
-with open(path, 'r') as f:
-    for line in f:
-
-        # %%
-
-        # 4
-lst = []
-for _ in range(3):
-    lst.append(int(input("Enter Number: ")))
-print(max(lst))
-
-# 1
-lst = []
-while True:
-    lst.append(int(input("Enter Number: ")))
-    if 1 <= lst[-1] <= 10:
-        break
-print(sum(lst))
 
 # %%
 empoyees = [(11,  34, 78,  5,  11, 56),
@@ -388,27 +362,6 @@ def main(arr):
 print(main([-7, 4, -8, 9, 25, 17]))
 print(main([6, 3, 8, 16, -5, 8, -6, 4, -9, -4, -1, -5]))
 
-# %%
-a = 2
-b = 5
-for i in range(a, b+1):
-    print(f"i = {i}")
-    for j in range(i+1, b+1):
-        print(f"   j = {j}")
-
-
-# %%
-
-
-def random_x():
-    n = randint(5, 20)
-    while n <= 16:
-        print("x" * n)
-        n = randint(5, 20)
-
-
-random_x()
-
 # %% DISKS
 
 """
@@ -531,119 +484,6 @@ rv = transpose(mirror(transpose(mirror([[1, 2, 3], [4, 5, 6]]))))
 print(*rv, sep="\n")
 
 
-# %% DUONG HAM
-"""
-dfs(1): visited = {1}
-    dfs(3): visited = {1, 3}
-        dfs(1): <=    
-    dfs(5): visited = {1, 3, 5}
-        dfs(1): <=
-    dfs(6): visited = {1, 3, 5, 6}
-        dfs(1): <=
-    <=
-"""
-
-
-def main(N, connections):
-
-    neis = collections.defaultdict(list)
-
-    for start, end in connections:
-        neis[start-1].append(end-1)
-        neis[end-1].append(start-1)
-
-    print(neis)
-
-    visited = set()
-
-    def dfs(node):
-        if node in visited:
-            return
-        visited.add(node)
-        for nei in neis[node]:
-            dfs(nei)
-
-    ans = 0
-    for i in range(N):
-        if i not in visited:
-            dfs(i)
-            ans += 1
-    return ans - 1
-
-
-print(main(9, [[1, 3], [1, 5], [1, 6], [2, 7], [4, 8], [8, 9]]))
-
-# %% DU TRU NUOC
-
-
-def main(N, arr):
-
-    water = 0
-    storages = []
-    for leftover, storage in arr:
-        water += leftover
-        storages.append(storage)
-
-    storages.sort()
-
-    ans = N
-    for storage in storages:
-        water -= storage
-        if water >= 0:
-            ans -= 1
-        else:
-            break
-    return ans
-
-
-print(main(4, [[0, 1], [3, 5], [0, 2], [1, 2]]))
-
-
-# %%
-
-
-@timer
-def main(R, C, mat):
-    def get_max_area(row):
-        row.append(-1)
-        ans = 0
-        stack = [-1]
-        for i, val in enumerate(row):
-            # Monotonic Stack
-            while stack and row[stack[-1]] > val:
-                H = row[stack.pop()]
-                W = i - stack[-1] - 1
-                ans = max(ans, H * W)
-            stack.append(i)
-        return ans
-
-    def maximum_rectangle(mat):
-        ans = 0
-        for r in range(R):
-            for c in range(C):
-                if mat[r][c]:
-                    # DP
-                    mat[r][c] += mat[r - 1][c]
-            ans = max(ans, get_max_area(mat[r]))
-        return ans
-
-    def recreate_mat(mat, number):
-        return [[val == number for val in row] for row in mat]
-
-    seen = set(val for row in mat for val in row)
-    ans = 0
-    for num in seen:
-        new_mat = recreate_mat(mat, num)
-        ans = max(ans, maximum_rectangle(new_mat))
-    return ans
-
-
-print(main(4, 5, [[1, 2, 1, 3, 2], [3, 2, 2, 2, 1, ],
-      [1, 2, 2, 2, 1], [1, 3, 3, 3, 2]]))
-
-arr = [random.choices(range(2), k=100) for _ in range(66000)]
-print(main(len(arr), len(arr[0]), arr))
-
 # %%
 
 
@@ -699,21 +539,6 @@ def main(N):
 
 
 print(main(7))
-
-
-# %%
-
-L = [1, 2, 3]
-L.append(4)
-print(L)
-
-
-L = [1, 2, 3]
-L.extend([4, 5])
-print(L)
-
-L.insert()
-
 
 # %%
 # import sympy
@@ -796,3 +621,164 @@ x = [2, 1, 4, 3]
 y = [1, 3, 5, 8]
 x, y = main(x, y)
 print(x, y, sep="\n")
+
+# %%
+
+
+def main(N):
+    N = str(N)
+    if len(N) < 3:
+        return False
+    freqs = [0] * 10
+    for c in N:
+        freqs[int(c)] += 1
+
+    odds = False
+    ans = 0
+    for freq in freqs:
+        if freq % 2:
+            odds = True
+        ans += freq // 2
+    return ans * 2 + odds
+
+
+print(main(2131135))
+print(main(11))
+print(main(13113))
+print(main(123121))
+# %%
+x = symbols("x")
+
+
+def req8(f, eta, xi, tol):
+    diff_x = diff(f, x, 1)
+    for _ in range(10000):
+        xi = xi - eta * diff_x.subs(x, xi).evalf()
+        if abs(diff_x.subs(x, xi)) < tol:
+            break
+    return round(xi, 2)
+
+
+print(req8(x**2 + 2*sin(x), 0.1, -5, 1e-3))
+print(req8(x**2 + 2*x - 1, 0.1, -5, 1e-3))
+
+# %%
+
+
+def sol1(text):
+    """
+    Giải sử dụng list thuần, dễ convert sang các ngôn ngữ khác
+    """
+    freqs = [0] * 26
+    offset = ord('a')
+    for c in text:
+        freqs[ord(c) - offset] += 1
+
+    ans = []
+    for i, val in enumerate(freqs):
+        ans.append(chr(i + offset) * val)
+
+    return ''.join(ans)
+
+
+def sol(text):
+    freqs = collections.Counter(text)
+    return ''.join(c * freqs[c] for c in string.ascii_lowercase)
+
+
+print(sol1("abdikjab"))
+print(sol2("abdikjab"))
+
+
+# %%
+
+
+x, y, z, t = symbols("x, y, z, t")  # KHONG XOA
+
+
+def req2(f, a, b, c):  # KHONG XOA
+
+    d1 = diff(f, x)
+    d2 = diff(f, y)
+    d3 = diff(f, z)
+    for d in d1, d2, d3:
+        if not d.is_rational_function():
+            return None
+    d1s = d1.subs({x: float(a), y: float(b), z: float(c)})*(x-float(a))
+    d2s = d2.subs({x: float(a), y: float(b), z: float(c)})*(y-float(b))
+    d3s = d3.subs({x: float(a), y: float(b), z: float(c)})*(z-float(c))
+    pttt = f.subs({x: float(a), y: float(b), z: float(c)}) + d1s + d2s + d3s
+    return pttt
+
+
+req2(abs(x), 1, 1, 1)
+req2(x**2 + y ** 2 + z ** 2, 1, 1, 1)
+
+
+# %%
+
+def main(N):
+    # Divisible by 9
+    if sum(int(val) for val in str(N)) % 9:
+        return -1
+    freqs = collections.Counter(map(int, str(N)))
+
+    # Divisible by 5
+    ans = -1
+    if freqs[0]:
+        ans = "".join(str(i) * freqs[i] for i in reversed(range(10)))
+    elif freqs[5]:
+        freqs[5] -= 1
+        ans = "".join(str(i) * freqs[i] for i in reversed(range(10)))
+        ans += "5"
+    return int(ans)
+
+
+print(main(45))
+print(main(153))
+print(main(555554444))
+print(main(12353215482))
+
+
+# %% Mountain Scape
+# new_pts = [((left := x - y) and 0) or (x, y) for x, y in reversed(pts) if x - y <= left]
+def main(pts):
+    pts.sort()
+
+    # Filter out all triangles that are completely within triangles to its right
+    new_pts = []
+    left = float("inf")
+    for x, y in reversed(pts):
+        if x - y >= left:
+            continue
+        new_pts.append((x, y))
+        left = x - y
+    new_pts.reverse()
+
+    # Filter out all triangles that are completely within triangles to its left
+    pts = []
+    right = float("-inf")
+    for x, y in new_pts:
+        if x + y <= right:
+            continue
+        pts.append((x, y))
+        right = x + y
+
+    area = pts[0][1] ** 2
+    for (px, py), (x, y) in zip(pts, pts[1:]):
+        ix = (px + py + x - y) / 2
+        iy = max(py - (ix - px), 0)
+        area += y * y - iy * iy
+    return area
+
+
+print(main([(1, 1), (4, 2), (7, 3)]))
+print(main([(0, 2), (5, 3), (7, 5)]))
+print(main([(1, 3), (5, 3), (5, 5), (8, 4)]))
+
+print(main([[26, 8], [74, 16]]))
+print(main([[10, 38], [98, 2], [36, 8], [14, 10], [92, 4],
+      [59, 5], [78, 16], [68, 2], [48, 4], [37, 15]]))
+
+print(main([(1, 3), (5, 3), (5, 5), (8, 4), (5, 1),
+      (6, 2), (7, 3), (8, 4), (9, 3), (10, 2), (11, 1)]))
