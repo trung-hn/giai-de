@@ -4,7 +4,7 @@ import functools
 
 def sol1(N):
     """
-    Time and Space: O(N^N)
+    Time and Space: O(2^N)
     Recursion
     """
     def dfs(total, prev=1):
@@ -31,6 +31,7 @@ def sol2(N):
 
 def sol3(N):
     """
+    Dynamic Programming
     Time and Space: O(N*N)
     Approach:
     We know:
@@ -75,7 +76,6 @@ def sol3(N):
     dp[1][1] = 1
 
     for i in range(2, N + 1):
-        # Number of sequence start with number >= i (because itself is counted as a sequence)
         half = i // 2 + 1
         dp[i][half: i + 2] = [1] * half
         for j in reversed(range(half)):
@@ -83,7 +83,7 @@ def sol3(N):
     return dp[N][0]
 
 
-N = 40
+N = 5
 print(sol1(N))
 print(sol2(N))
 print(sol3(N))
