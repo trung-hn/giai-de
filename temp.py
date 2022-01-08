@@ -1,4 +1,13 @@
 # %%
+import enum
+import itertools
+import os
+import requests
+from matplotlib.figure import Figure
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg, NavigationToolbar2Tk)
+import tkinter
 from types import new_class
 import numpy as np  # KHONG XOA
 from sympy import *  # KHONG XOA
@@ -739,46 +748,216 @@ print(main(153))
 print(main(555554444))
 print(main(12353215482))
 
-
-# %% Mountain Scape
-# new_pts = [((left := x - y) and 0) or (x, y) for x, y in reversed(pts) if x - y <= left]
-def main(pts):
-    pts.sort()
-
-    # Filter out all triangles that are completely within triangles to its right
-    new_pts = []
-    left = float("inf")
-    for x, y in reversed(pts):
-        if x - y >= left:
-            continue
-        new_pts.append((x, y))
-        left = x - y
-    new_pts.reverse()
-
-    # Filter out all triangles that are completely within triangles to its left
-    pts = []
-    right = float("-inf")
-    for x, y in new_pts:
-        if x + y <= right:
-            continue
-        pts.append((x, y))
-        right = x + y
-
-    area = pts[0][1] ** 2
-    for (px, py), (x, y) in zip(pts, pts[1:]):
-        ix = (px + py + x - y) / 2
-        iy = max(py - (ix - px), 0)
-        area += y * y - iy * iy
-    return area
+# %%
 
 
-print(main([(1, 1), (4, 2), (7, 3)]))
-print(main([(0, 2), (5, 3), (7, 5)]))
-print(main([(1, 3), (5, 3), (5, 5), (8, 4)]))
+def main(N, S, nums):
+    """
+    Recursive with memoizationi
+    """
+    visited = set()
 
-print(main([[26, 8], [74, 16]]))
-print(main([[10, 38], [98, 2], [36, 8], [14, 10], [92, 4],
-      [59, 5], [78, 16], [68, 2], [48, 4], [37, 15]]))
+    def dfs(i, target, sofar=[]):
+        if (i, target) in visited:
+            return None
+        visited.add((i, target))
+        if target == 0:
+            return sofar
+        if i == N - 1 or target < 0:
+            return None
+        return dfs(i + 1, target, sofar) or dfs(i + 1, target - nums[i], sofar + [nums[i]])
 
-print(main([(1, 3), (5, 3), (5, 5), (8, 4), (5, 1),
-      (6, 2), (7, 3), (8, 4), (9, 3), (10, 2), (11, 1)]))
+    return dfs(0, S)
+
+
+def main2(N, S, nums):
+    """
+    DP
+    """
+    dp = [[[] for _ in range(N + 1)] for _ in range(S + 1)]
+    for i, num in enumerate(nums, 1):
+        for s in range(S + 1):
+            if s >= num and (dp[s][i - 1] or s == S):
+                dp[s - num][i] = dp[s][i - 1] + [num]
+            dp[s][i] = dp[s][i - 1] + []
+    for res in dp[0]:
+        if res:
+            return res
+
+
+L = random.choices(range(10, 100), k=100)
+print(main(10, 390, [200, 10, 20, 20, 50, 50, 50, 50, 100, 100]))
+print(main2(10, 390, [200, 10, 20, 20, 50, 50, 50, 50, 100, 100]))
+
+
+# %%
+
+@timer
+def main1(N):
+    ans = []
+
+    def dfs(total, vals=[]):
+        if total > N:
+            return None
+
+        if total == N:
+            ans.append(vals)
+            return
+
+        for num in range(1, N + 1):
+            dfs(total + num, vals + [num])
+    dfs(0)
+    seen = set()
+    for row in ans:
+        seen.add(tuple(sorted(row)))
+    return len(seen)
+
+
+@timer
+def main2(N):
+    ans = []
+
+    def dfs(total, vals=[]):
+        if total > N:
+            return None
+
+        if total == N:
+            ans.append(vals)
+            return
+
+        start = 1 if not vals else vals[-1]
+        for num in range(start, N + 1):
+            dfs(total + num, vals + [num])
+
+    dfs(0)
+    return len(ans)
+
+
+"""
+N = 4
+dfs(0, 1): 5
+    dfs(1, 1): 3
+        dfs(2, 1): 2
+            dfs(3, 1): 1
+                dfs(4, 1): 1
+                    <== 1 (1, 1, 1, 1)
+                dfs(5, 2): 0
+                dfs(6, 3): 0
+                dfs(7, 4): 0
+                <== 1
+            dfs(4, 2): 1
+                <== 1 (1, 1, 2)
+            dfs(5, 3): 0
+            ...
+            <===
+        dfs(3, 2): 0
+            dfs(5, 2): 0
+        dfs(4, 3): 1
+            <== 1 (1, 3)
+        ...
+    dfs(2, 2): 1
+        dfs(4, 2): 1
+        <== 1 (2, 2)
+    dfs(3, 3): 
+        <== 0
+    dfs(4, 4): 1
+        <== 1
+"""
+
+
+@timer
+def main3(N):
+    # Time: O(N*N)
+    @functools.cache
+    def dfs(total, prev=1):
+        if total > N:
+            return 0
+        if total == N:
+            return 1
+        rv = 0
+        for num in range(prev, N + 1):
+            rv += dfs(total + num, num)
+        return rv
+    return dfs(0)
+
+
+@timer
+def main4(N):
+    # Time: O(N*N)
+    dp = [[0] * (N + 1) for _ in range(N + 1)]
+    for i in range(1, N + 1):
+        half = i // 2 + 1
+        dp[i][half: i + 2] = [1] * half
+        for j in reversed(range(i // 2 + 1)):
+            dp[i][j] = dp[i - j][j] + dp[i][j + 1]
+    return dp[N][1]
+
+
+N = 7
+print(main1(N))
+print(main2(N))
+print(main3(N))
+print(main4(N))
+
+# %%
+
+idx = dict(zip(string.ascii_lowercase, range(26)))
+print(idx)
+s = "hello"
+ans = 0
+for c1, c2 in zip(s, s[1:]):
+    ans += abs(idx[c1] - idx[c2])
+print(ans)
+
+
+# %%
+
+s = "abcdef"
+L = [1, 2, 3]
+for c1, c2, c3 in zip(s, s[1:], s[2:]):
+    print(c1, c2, c3)
+
+# %%
+
+
+def permutate(S):
+    S = sorted(S)
+    ans = []
+
+    def dfs(i=0, group="", visited=set()):
+        if len(group) == len(S):
+            ans.append(group)
+            return
+        for i, c in enumerate(S):
+            if i in visited:
+                continue
+            visited.add(i)
+            dfs(i + 1, group + c, visited)
+            visited.discard(i)
+    dfs()
+    return ans
+
+
+print(permutate("4321"))
+# print(list(itertools.permutations("aaa")))
+
+
+# %%
+
+def main(N):
+
+    ans = []
+
+    def dfs(target, sofar=[]):
+        if target == 0:
+            ans.append(sofar)
+            return
+        start = 0 if not sofar else sofar[-1]
+        for n in range(start + 1, target + 1):
+            dfs(target - n, sofar + [n])
+    dfs(N)
+    return ans
+
+
+main(8)
+# [[1, 2, 5], [1, 3, 4], [1, 7], [2, 6], [3, 5], [8]]
