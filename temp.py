@@ -9,33 +9,28 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 import tkinter
 from types import new_class
-import numpy as np  # KHONG XOA
-from sympy import *  # KHONG XOA
 from sympy import *
-import functools
-from math import comb
-from os import dup
+import math
 import random
 import string
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from pprint import pprint
-from random import randint
 import collections
-import functools
 import time
+import functools
 
 
 def timer(func):
     """Print the runtime of the decorated function"""
     @functools.wraps(func)
     def wrapper_timer(*args, **kwargs):
-        start_time = time.perf_counter()    # 1
+        start_time = time.perf_counter()
         value = func(*args, **kwargs)
-        end_time = time.perf_counter()      # 2
-        run_time = end_time - start_time    # 3
-        print(f"Finished {func.__name__!r} in {run_time:.4f} secs")
+        end_time = time.perf_counter()
+        run_time = end_time - start_time
+        print(f"Finished {func.__name__!r} in {run_time:.6f} secs")
         return value
     return wrapper_timer
 
@@ -893,7 +888,7 @@ def main4(N):
     return dp[N][1]
 
 
-N = 7
+N = 15
 print(main1(N))
 print(main2(N))
 print(main3(N))
@@ -961,3 +956,63 @@ def main(N):
 
 main(8)
 # [[1, 2, 5], [1, 3, 4], [1, 7], [2, 6], [3, 5], [8]]
+
+
+# %%
+def rotate_m90(mat):
+    return list(zip(*map(reversed, mat)))
+
+
+def main(N):
+    start = N**2 - 1
+    mat = [[start]]
+    while start > 0:
+        C = len(mat)
+        mat = rotate_m90(mat) + [range(start - C, start)]
+        start -= C
+
+    for row in reversed(mat):
+        for val in row:
+            print(f"{val:02}", end="\t")
+        print()
+
+
+main(5)
+
+# %%
+
+
+def main(R, C, K, mat):
+
+    # Create list of (value, row, col)
+    nums = []
+    for r in range(R):
+        for c in range(C):
+            nums.append((mat[r][c], r, c))
+
+    # Recursion to find combinations
+    def dfs(step=0, total=0, rows=set(), cols=set()):
+        if step == K:
+            return total
+        rv = 0
+        for v, r, c in nums:
+            if r in rows:
+                continue
+            if c in cols:
+                continue
+            rows.add(r)
+            cols.add(c)
+            rv = max(rv, dfs(step + 1, total + v, rows, cols))
+            rows.discard(r)
+            cols.discard(c)
+        return rv
+
+    return dfs()
+
+
+main(3, 3, 2, [[1, 2, 3], [4, 5, 6], [7, 8, 9]])  # 14
+main(5, 10, 3, [[70, 87, 78, 55, 67, 15, 91, 30, 49, 86],
+                [61, 93, 83, 77, 63, 95, 34, 78, 52, 89],
+                [19, 74, 24, 71, 46, 87, 91, 0, 45, 40],
+                [11, 43, 85, 69, 60, 77, 8, 36, 48, 35],
+                [56, 30, 11, 33, 75, 14, 10, 4, 22, 74]])  # 273
