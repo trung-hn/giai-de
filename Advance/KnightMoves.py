@@ -17,31 +17,20 @@ Output should be "h8" instead of (8, 8)
 """
 
 
-def main(pos=(5, 4), moves="ADAG"):
+def main(pos="e4", moves="AGG"):
     delta = {"A": (-1, 2), "B": (-2, 1), "C": (-2, -1), "D": (-1, -2),
              "E": (1, -2), "F": (2, -1), "G": (2, 1), "H": (1, 2)}
-    x, y = pos
+
+    chr_2_num = dict(zip("abcdefgh", range(1, 9)))
+    x, y = chr_2_num[pos[0]], int(pos[1])
     for move in moves:
         dx, dy = delta[move]
         x += dx
         y += dy
-    return x, y
+
+    num_2_chr = ".abcdefgh"
+    return num_2_chr[x] + str(y)
 
 
-def main2(pos="e4", moves="ADAG"):
-    delta = {"A": (-1, 2), "B": (-2, 1), "C": (-2, -1), "D": (-1, -2),
-             "E": (1, -2), "F": (2, -1), "G": (2, 1), "H": (1, 2)}
-    pos_map = dict(zip("abcdefgh", range(1, 9)))
-    x, y = pos_map[pos[0]], int(pos[1])
-    for move in moves:
-        dx, dy = delta[move]
-        x += dx
-        y += dy
-    n_to_c = ".abcdefgh"
-    return n_to_c[x] + str(y)
-
-
-print(main((5, 4), "AGG"))
-print(main((5, 4), "AHCDEFACD"))
-print(main2("e4", "AGG"))
-print(main2("e4", "AHCDEFACD"))
+print(main("e4", "AGG"))  # h8
+print(main("e4", "AHCDEFACD"))  # a1
