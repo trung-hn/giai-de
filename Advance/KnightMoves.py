@@ -21,15 +21,12 @@ def main(pos="e4", moves="AGG"):
     delta = {"A": (-1, 2), "B": (-2, 1), "C": (-2, -1), "D": (-1, -2),
              "E": (1, -2), "F": (2, -1), "G": (2, 1), "H": (1, 2)}
 
-    chr_2_num = dict(zip("abcdefgh", range(1, 9)))
-    x, y = chr_2_num[pos[0]], int(pos[1])
+    x, y = ord(pos[0]) - 65, int(pos[1])
     for move in moves:
         dx, dy = delta[move]
         x += dx
         y += dy
-
-    num_2_chr = ".abcdefgh"
-    return num_2_chr[x] + str(y)
+    return chr(x + 65) + str(y)
 
 
 print(main("e4", "AGG"))  # h8
