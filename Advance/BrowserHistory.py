@@ -49,6 +49,7 @@ obj.visit("C")
 obj.visit("D")
 print(obj.back(1))  # C
 obj.visit("E")
-print(obj.back(2))  # B
+print(obj.back(4))  # B
 print(obj.forward(2))  # E
 print(obj.forward(2))  # E
+
