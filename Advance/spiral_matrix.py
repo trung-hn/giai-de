@@ -22,6 +22,10 @@ main(5)
 # %%
 
 
+def rotate_m90(mat):
+    return list(zip(*map(reversed, mat)))
+
+
 def main2(N):
     start = 1
     mat = [[start]]
