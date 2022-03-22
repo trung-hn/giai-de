@@ -1,6 +1,7 @@
 # %%
 """
 Source: https://www.chegg.com/homework-help/questions-and-answers/consider-group-points-point-made-x-y-coordinate-point-group-considered-maximal-point-group-q28200462?fbclid=IwAR39R00TEM5if-hlWUwgNEb7LqFrLqwIYauJdTooel3Bgieb8McpVmRPB6A
+Time Complexity: O(NlogN) where N is number of points.
 """
 from collections import defaultdict
 
