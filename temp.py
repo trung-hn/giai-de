@@ -1,6 +1,6 @@
-from collections import defaultdict
-from tkinter.tix import Tree
 # %%
+from typing import NamedTuple
+from tkinter.tix import Tree
 import turtle
 import bisect
 from audioop import reverse
@@ -11,7 +11,7 @@ import enum
 import itertools
 import os
 from turtle import st
-from typing import overload
+from typing import NamedTuple, overload
 import requests
 from matplotlib.figure import Figure
 from matplotlib.backend_bases import key_press_handler
@@ -1753,3 +1753,53 @@ def main(S):
 
 
 main("aabbbcaAA")
+
+
+# %%
+
+
+class Thing(NamedTuple):
+    name: str
+    value: int
+
+
+v1 = Thing("a", 1)
+v2 = Thing("b", 2)
+
+# %%
+
+
+def main(nums):
+    freq = collections.Counter(nums)
+    sorted_freq = sorted(freq, key=freq.get, reverse=True)
+    return [val * freq[val] for val in sorted_freq]
+
+
+def main(nums):
+    first_seen = {}
+    freqs = [0] * 10
+    for i, num in enumerate(nums):
+        if num not in first_seen:
+            first_seen[num] = i
+        freqs[num] += 1
+
+    sorted_freq = sorted(enumerate(freqs), key=lambda x: -x[1])
+    return [num * freq for num, freq in sorted_freq if freq]
+
+
+print(main([5, 6, 8, 6, 7, 4, 5, 3, 4, 5, 6, 7, 8, 9, 6]))
+# [24, 15, 8, 14, 16, 3, 9]
+
+# %%
+
+
+def main(n, a, b):
+    minutes_per_day = a - b
+    return math.ceil((n - a) / minutes_per_day) + 1
+
+
+main(16, 7, 2)
+
+# %%
+
+

@@ -27,7 +27,7 @@ def get_prime_factors(n, primes):
 
 
 def main(n):
-    primes = get_primes(1000)
+    primes = get_primes(n)
     primes_set = set(primes)
     dp = collections.defaultdict(int, {1: 0, 2: 1})
     for i in range(3, n + 1):
@@ -36,7 +36,7 @@ def main(n):
             # f(7) = 7/6 * f(6) => dp[7] = 1 + dp[6]
             dp[i] = dp[i - 1] + 1
         else:
-            # Normla number. Example:
+            # Normal number. Example:
             # f(10) = f(5) * f(2) => dp[10] = dp[5] + dp[2]
             # f(16) = f(2) ** 4 => dp[16] = dp[2] * 4
             prime_factors = get_prime_factors(i, primes)
@@ -45,6 +45,6 @@ def main(n):
     return dp[n]
 
 
-main(1024)  # 10
+main(1024)  # => 10
 
 # %%
