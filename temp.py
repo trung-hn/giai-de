@@ -1802,4 +1802,95 @@ main(16, 7, 2)
 
 # %%
 
+class MyClass:
+    def method1(self):
+        pass
+
+    def _method2(self):
+        pass
+
+    def __method3(self):
+        pass
+
+    def __method4__(self):
+        pass
+
+    @classmethod
+    def __method5(cls):
+        pass
+
+# %%
+
+class Animal:
+    def __init__(self):
+        print(1)
+
+    def eat(self):
+        print(2)
+
+Animal # <- đây là class
+
+
+obj = Animal.__init__(Animal) # <- thực hiện __init__ của class Animal
+                              # điều này sẽ tạo ra instance (obj)
+
+obj = Animal() # <- đây là cách ghi tắt của code bên trên
+
+
+
+Animal.eat(obj) # <- thực hiện method của instance
+                # self ở đây chính là obj !!!
+
+obj.eat() # tượng tự như trên, nhưng đây là cách tắt
+
+
+# Tóm lại, phần `self` được tự động hiểu bời Python
+
+
+# %%
+
+class Animal:
+    pass
+
+Animal()
+
+# %%
+
+total = 0    
+for start:
+    cnt = 1
+    for end:
+        total += end * cnt
+        cnt += 1
+
+
+# %%
+
+x = a % K
+
+x ** 2 = ((a % K) ** 2) % K
+
+x ** 90 = (x ** 64) * (x ** 16) * (x ** 8) * (x ** 2)
+
+
+# %%
+a = 10
+m = 10
+K = 7
+memory = [0] * 20
+x = a % K
+i = 0
+memory[2**i] = x
+
+for i in range(1, 10):
+    x = (x * x) % K
+    memory[i] = x
+
+print(memory)
+memory[j] = a ** (2 ** j) % K
+
+m = 128 # 2 ^ 6
+
+# (x * x) % K = x % K * x % K
+
 
