@@ -10,6 +10,14 @@ def prob1(A, B, C, D):
     neg = sum(val < 0 for val in (A, B, C, D))
     return -1 if neg % 2 else 1
 
+# %% PTG.dk35782#9488
+
+def prob2(n: int) -> str:
+  string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  return string[(n*(n+1)//2) % 26]
+
+print(prob2(1))
+print(prob2(4))
 
 # %%
 
